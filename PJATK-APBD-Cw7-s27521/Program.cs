@@ -1,3 +1,7 @@
+using Microsoft.EntityFrameworkCore;
+using PJATK_APBD_Cw7_s27521.Infrastructure;
+using PJATK_APBD_Cw7_s27521.Service;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,13 +10,20 @@ builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 
+builder.Services.AddScoped<IPCService, PCService>();
+
+builder.Services.AddDbContext<DatabaseContext>(opt =>
+{
+    opt.UseSqlServer(builder.Configuration.GetConnectionString("Default"));
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
-    app.UseSwaggerUI(opt => opt.SwaggerEndpoint("/openapi5/v1.json", "My API V1"));
+    app.UseSwaggerUI(opt => opt.SwaggerEndpoint("/openapi/v1.json", "My API V1"));
 }
 
 app.UseHttpsRedirection();
