@@ -36,14 +36,30 @@ public class PCsController(IPCService service) : ControllerBase
     }
     
     [HttpPut("{id:int}")]
-    public async Task<IActionResult> Update([FromRoute] int id)
+    public async Task<IActionResult> Update([FromRoute] int id, [FromBody] UpdatePCDto pc, CancellationToken cancellationToken)
     {
-        return Ok();
+        try
+        { 
+            await service.UpdateAsync(id, pc, cancellationToken);
+            return NoContent();
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
     
     [HttpDelete("{id:int}")]
-    public async Task<IActionResult> Delete([FromRoute] int id)
+    public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken cancellationToken)
     {
-        return Ok();
+        try
+        { 
+            await service.DeleteAsync(id, cancellationToken);
+            return Created();
+        }
+        catch (NotFoundException e)
+        {
+            return NotFound(e.Message);
+        }
     }
 }
